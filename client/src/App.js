@@ -9,11 +9,22 @@ import "./App.css";
 function App() {
 	const [user, setUser] = useState(null);
 
+	const cookieOptions = {
+		secure: true,
+		httpOnly: true,
+		sameSite: 'strict',
+	  };
+	  
+	  const storeAccessToken = (token) => {
+		document.cookie = `access_token=${token}; ${cookieOptions}`;
+	  };
+
 	const getUser = async () => {
 		try {
 			const url = `${process.env.REACT_APP_API_URL}/auth/login/success`;
 			const { data } = await axios.get(url, { withCredentials: true });
 			setUser(data.user._json);
+			storeAccessToken(data.user._json.access_token);
 		} catch (err) {
 			console.log(err);
 		}
